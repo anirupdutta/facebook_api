@@ -57,8 +57,14 @@ function facebook_api_login() {
 	
 	$users = elgg_get_entities_from_plugin_user_settings($options);
 
+        // need facebook account credentials
+        $data = $facebook->api('/me');
+        
 	if ($users) {
 		if (count($users) == 1 && login($users[0])) {
+                        
+                        //If user changed his email address
+                        $users[0]->email = $data['email'];
 			system_message(elgg_echo('facebook_api:login:success'));
 			elgg_set_plugin_user_setting('access_token', $session['access_token'], $users[0]->guid);
 
@@ -68,8 +74,6 @@ function facebook_api_login() {
 
 		forward();
 	} else {
-		// need facebook account credentials
-		$data = $facebook->api('/me');
 		
 		// backward compatibility for stalled-development FBConnect plugin
 		$user = FALSE;
@@ -84,6 +88,9 @@ function facebook_api_login() {
 		if (is_array($facebook_users) && count($facebook_users) == 1) {
 			// convert existing account
 			$user = $facebook_users[0];
+                        
+                        //If user changed his email address
+                        $user->email = $data['email'];
 			login($user);
 			
 			// remove unused metadata
@@ -117,6 +124,12 @@ function facebook_api_login() {
 			$user->owner_guid = 0;
 			$user->container_guid = 0;
                         $user->email = $data['email'];
+                        $user->description = $data['bio'];
+                        $user->briefdescription = $data['bio'];
+                        $user->contactemail = $data['email'];
+                        $user->website = $data['website'];
+                        $user->location = $data['location'];
+                        
 
 			$site = elgg_get_site_entity();
                         if(!elgg_get_plugin_setting('message_string', 'facebook_api'))
@@ -308,7 +321,7 @@ function facebook_api_get_authorize_url($next='') {
 	$facebook = facebookservice_api();
 	return $facebook->getLoginUrl(array(
 		'next' => $next,
-		'req_perms' => 'offline_access,email,user_status,publish_stream,read_stream,read_requests ',
+		'req_perms' => 'offline_access,user_website,user_location,user_about_me,email,user_status,publish_stream,read_stream,read_requests ',
 	));
 
         
