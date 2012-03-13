@@ -127,8 +127,6 @@ function facebook_api_login() {
                         $user->description = $data['bio'];
                         $user->briefdescription = $data['bio'];
                         $user->contactemail = $data['email'];
-                        $user->website = $data['website'];
-                        $user->location = $data['location'];
                         
 
 			$site = elgg_get_site_entity();
@@ -321,7 +319,7 @@ function facebook_api_get_authorize_url($next='') {
 	$facebook = facebookservice_api();
 	return $facebook->getLoginUrl(array(
 		'next' => $next,
-		'req_perms' => 'offline_access,user_website,user_location,user_about_me,email,user_status,publish_stream,read_stream,read_requests ',
+		'req_perms' => 'offline_access,user_about_me,email,user_status,publish_stream,read_stream,read_requests ',
 	));
 
         
