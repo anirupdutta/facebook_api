@@ -1,4 +1,4 @@
-Change directory name to facebook_api
+Change directory name to facebook_api to make the plugin work.
 
 Please get your api key and secret from facebook at http://www.facebook.com/developers/
 
@@ -7,5 +7,3 @@ Many endpoints have been exposed
 Demo at http://sync.heybuddy.in/
 
 Remember this works only for elgg 1.8.
-
-To make the plugin work.
