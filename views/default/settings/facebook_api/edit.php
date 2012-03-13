@@ -38,12 +38,21 @@ $new_users_with_facebook_view = elgg_view('input/dropdown', array(
 	'value' => $vars['entity']->new_users ? $vars['entity']->new_users : 'no',
 ));
 
+$message_string = elgg_echo('facebook_api:message_string');
+$message_string_view = elgg_view('input/text', array(
+	'name' => 'params[message_string]',
+	'value' => $vars['entity']->message_string,
+	'class' => 'text_input',
+));
+
+
 $settings = <<<__HTML
 <div>$insert_view</div>
 <div>$consumer_key_string $consumer_key_view</div>
 <div>$consumer_secret_string $consumer_secret_view</div>
 <div>$sign_on_with_facebook_string $sign_on_with_facebook_view</div>
 <div>$new_users_with_facebook $new_users_with_facebook_view</div>
+<div>$description_string $description_string_view</div>
 __HTML;
 
 echo $settings;

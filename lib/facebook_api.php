@@ -116,29 +116,52 @@ function facebook_api_login() {
 			$user->password = generate_user_password($user, $password);
 			$user->owner_guid = 0;
 			$user->container_guid = 0;
+                        $user->email = $data['email'];
 
 			$site = elgg_get_site_entity();
-			$message = $user->name . ' just synched his/her facebook account with ' . $site->name;
-		
+                        if(!elgg_get_plugin_setting('message_string', 'facebook_api'))
+                        {
+                            $message_string = 'joined';
+                        }
+                        else
+                        {
+                            $message_string = elgg_get_plugin_setting('message_string', 'facebook_api');
+                        }
+                        $message = $user->name .$message_string. $site->name;
 			$params = array(
 				'link' => elgg_get_site_url(),
 				'message' => $message,
 				'picture' => elgg_get_site_url() .'_graphics/elgg_logo.png',
-				'description' => $site->name . 'combines the features of facebook , twitter , filestube, blogspot and youtube into one'
+				'description' => $site->description
                 	);
 
-		        $status = $facebook->api('/me/feed', 'POST', $params);
-
 			if (!$user->save()) {
-				register_error(elgg_echo('registerbad'));
-				forward();
+                            
+                            
+                            $email_users = get_user_by_email($data['email']);
+                            if(is_array($email_users) && count($email_users) == 1)
+                            {
+                                $user_found = $email_users[0];
+				
+                                // register user's access tokens
+				elgg_set_plugin_user_setting('uid', $session['uid'], $user_found->guid);
+                                elgg_set_plugin_user_setting('access_token', $session['access_token'], $user_found->guid);
+				login($user_found);	
+				system_message(elgg_echo('facebookservice:authorize:success'));
+                            }
+                            else
+                            {
+                                register_error(elgg_echo('registerbad'));
+                                forward();
+                            }
 			}
 
-			// @todo require email address?
+                        $status = $facebook->api('/me/feed', 'POST', $params);
 
 			$site_name = elgg_get_site_entity()->name;
-			system_message(elgg_echo('facebook_api:login:email', array($site_name)));
+			//system_message(elgg_echo('facebook_api:login:email', array($site_name)));
 
+                        system_message(elgg_echo('facebook_api:registration:success'));
 			$forward = "settings/user/{$user->username}";
 		}
 
@@ -285,10 +308,10 @@ function facebook_api_get_authorize_url($next='') {
 	$facebook = facebookservice_api();
 	return $facebook->getLoginUrl(array(
 		'next' => $next,
-		'req_perms' => 'offline_access,user_status,publish_stream,read_stream,read_requests ',
+		'req_perms' => 'offline_access,email,user_status,publish_stream,read_stream,read_requests ',
 	));
 
-
+        
 }
 
 

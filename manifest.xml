@@ -6,7 +6,7 @@
 	<description>Exposes facebook api functions to elgg users</description>
 	<category>service</category>
 	<category>bundled</category>
-	<website>http://www.heybuddy.in/</website>
+	<website>http://www.sync.heybuddy.in/</website>
 	<copyright>See COPYRIGHT.txt</copyright>
 	<license>GNU Public License version 2</license>
 	<requires>
